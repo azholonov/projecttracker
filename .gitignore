@@ -1,0 +1,5 @@
+.vs
+packages
+ProjectTracker/obj/
+ProjectTracker/bin/
+ProjectTracker/App_Data/

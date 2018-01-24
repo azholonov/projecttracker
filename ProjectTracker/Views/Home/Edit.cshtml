@@ -1,0 +1,142 @@
+﻿@model ProjectTracker.Models.Project
+
+@using ProjectTracker.Models;
+<h2>@ViewBag.Title</h2>
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.ID)
+
+        <div class="form-group">
+            <label class="control-label col-md-2">Название</label>
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="Model.Description" class="control-label col-md-2">Приоритет</label>
+            <div class="col-md-10">
+                @Html.EnumDropDownListFor(x => x.Priority, new { @class = "form-control" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2">Начало</label>
+            <div class='input-group date col-md-3' id='BeginDate'>
+                <input type='text' class="form-control" name="BeginDate" />
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2">Конец</label>
+            <div class='input-group date col-md-3' id='EndDate'>
+                <input type='text' class="form-control" name="EndDate" />
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2">Описание</label>
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2">Компания заказчик</label>
+            <div class="col-md-10">
+                @Html.DropDownListFor(model=>model.CustomerCompany.ID, ViewBag.Companies as SelectList, new { id = "customercompany" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2">Компания исполнитель</label>
+            <div class="col-md-10">
+                @Html.DropDownListFor(model=>model.ExecutorCompany.ID, ViewBag.Companies as SelectList, new { id = "ExecutorCompany" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2">Руководитель проекта</label>
+            <div class="col-md-10">
+                @Html.DropDownListFor(model=>model.Manager.ID, ViewBag.Managers as SelectList, new { id = "Manager" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2">Исполнители</label>
+            <div class="col-md-10">
+                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#myModal">Исполнители проекта</button>
+
+                <div id="myModal" class="modal fade" role="dialog">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h4 class="modal-title">Выбор исполнителей</h4>
+                            </div>
+                            <div class="modal-body">
+                                @{
+                                    List<Employee> employees = ViewBag.Employees;
+                                    foreach (Employee emp in employees)
+                                    {
+                                        <input type="checkbox" name="selectedEmps" value="@emp.ID" @(Model.Employees.Contains(emp) ? "checked=\"checked\"" : "" ) />@(emp.LastName + " " + emp.FirstName)<br />
+                                    }
+                                }
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn" data-dismiss="modal">Закрыть</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Сохранить" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Назад к списку", "Index")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+         $('#BeginDate').datetimepicker({
+            locale: 'ru',
+            stepping: 10,
+            format: 'DD.MM.YYYY',
+            daysOfWeekDisabled: [0, 6],
+            date: '@(Model.BeginDate!=null ? Model.BeginDate.Value.ToString("yyyy-MM-dd") : DateTime.Now.ToString("yyyy-MM-dd"))'
+         });
+        $('#EndDate').datetimepicker({
+            locale: 'ru',
+            stepping: 10,
+            format: 'DD.MM.YYYY',
+            daysOfWeekDisabled: [0, 6],
+            date: '@(Model.EndDate!=null ? Model.EndDate.Value.ToString("yyyy-MM-dd") : DateTime.Now.ToString("yyyy-MM-dd"))'
+        });
+    </script>
+}

@@ -1,0 +1,176 @@
+﻿@model IEnumerable<ProjectTracker.Models.Project>
+@using ProjectTracker.Models;
+
+@{
+    ViewBag.Title = "Главная";
+}
+
+<h2>Проекты</h2>
+
+<div class="form-horizontal">
+    <h4>Фильтры</h4>
+    <div class="form-group">
+        <div class="row">
+            <div class="col-sm-3">
+                <label>Название</label>
+                <div>
+                    <input id="projectName" type="text" name="projectName" class="form-control" />
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <label>Компания заказчик</label>
+                <div>
+                    @Html.DropDownList("CustomerCompany", ViewBag.Companies as SelectList, new { id = "CustomerCompany", @class = "form-control" })
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <label>Компания исполнитель</label>
+                <div>
+                    @Html.DropDownList("ExecutorCompany", ViewBag.Companies as SelectList, new { id = "ExecutorCompany", @class = "form-control" })
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="row">
+            <div class="col-sm-3">
+                <label>Начало</label>
+                <div class='input-group date' id='cBeginDate'>
+                    <input type='text' class="form-control" id="beginDate" name="cBeginDate" />
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <label>Конец</label>
+                <div class='input-group date' id='cEndDate'>
+                    <input type='text' class="form-control" id="endDate" name="cEndDate" />
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <label>Приоритет</label>
+                <div>
+                    @Html.DropDownList("Priority", ViewBag.Priorities as SelectList, new { id="Priority",  @class = "form-control" })
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="row">
+            <div class="col-sm-3">
+                <label>Менеджер</label>
+                <div>
+                    @Html.DropDownList("Manager", ViewBag.Employees as SelectList, new { id = "Manager", @class = "form-control" })
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <label>Исполнитель</label>
+                <div>
+                    @Html.DropDownList("Employee", ViewBag.Employees as SelectList, new { id = "Employee", @class="form-control" })
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <label></label>
+                <div>
+                    <input type="submit" value="Выбрать" id="filterButton" class="btn btn-default" />
+                    <a href="@Url.Action("Index")" class="btn btn-default">Очистить</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<p>
+    <a href="@Url.Action("Create")" class="btn btn-primary"><i class="glyphicon glyphicon-new-window">Новый проект</i></a>
+</p>
+<table id="projectstable" class="table table-striped table-bordered" cellspacing="0">
+    <thead>
+        <tr>
+            <th>
+                Название
+            </th>
+            <th>
+                Начало
+            </th>
+            <th>
+                Конец
+            </th>
+            <th>
+                Приоритет
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @(item.BeginDate == null ? "" : item.BeginDate.Value.ToString("dd.MM.yyyy"))
+                </td>
+                <td>
+                    @(item.EndDate == null ? "" : item.EndDate.Value.ToString("dd.MM.yyyy"))
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Priority)
+                </td>
+                <td>
+                    @Html.ActionLink("Редактировать", "Edit", new { id = item.ID }) |
+                    @Html.ActionLink("Удалить", "Delete", new { id = item.ID })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+@section Scripts {
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#projectstable').DataTable({
+            "language": {
+                "lengthMenu": "Показать _MENU_ записей на страницу",
+                "zeroRecords": "Нет записей",
+                "info": "Страница _PAGE_ из _PAGES_",
+                "infoEmpty": "Нет записей",
+                "infoFiltered": "(отфильтровано _MAX_ всего записей)",
+                "search": "Поиск",
+                "paginate": {
+                    "first": "Первая",
+                    "last": "Последняя",
+                    "next": "След.",
+                    "previous": "Пред."
+                },
+            }
+        });
+        $("#beginDate").val('');
+        $("#endDate").val('');
+        $('#filterButton').click(function () {
+            var bgdt = $('#beginDate').val();
+            var edt = $('#endDate').val();
+            var nm = $('#projectName').val();
+            var customer = $('#CustomerCompany').val();
+            var executor = $('#ExecutorCompany').val();
+            var priority = $('#Priority').val();
+            var manager = $('#Manager').val();
+            var emp = $('#Employee').val();
+            window.location.href = '@Url.Action("Index")'
+                + '?name=' + nm
+                + '&bgdate=' + bgdt
+                + "&edate=" + edt
+                + "&customer=" + customer
+                + '&executor=' + executor
+                + '&priority=' + priority
+                + '&manager=' + manager
+                + '&employee=' + emp;
+        });
+    });
+
+</script>
+}
