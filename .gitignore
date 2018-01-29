@@ -3,3 +3,5 @@ packages
 ProjectTracker/obj/
 ProjectTracker/bin/
 ProjectTracker/App_Data/
+ProjectTracker.DAL/bin
+ProjectTracker.DAL/obj/
